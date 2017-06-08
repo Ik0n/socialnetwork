@@ -15,7 +15,6 @@
 
         <tr class="history-tr-table">
             <td> {{ $u->name }} </td>
-            <td> {{ $u->password }} </td>
             <td> {{ $u->email }} </td>
             <td> {{ $u->number }} </td>
             <td> {{ $u->first_name }} </td>
