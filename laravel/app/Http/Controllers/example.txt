@@ -1,0 +1,91 @@
+    	//Получить коллекцию продуктов
+    	//Коллекция - это массив объектов
+    	//Метод get, без дополнительных параметров и без других методов, аналогичен SELECT * FROM products
+    	//$products = Product::get();
+
+    	//Только атрибуты id и title
+    	//Получаем массив объектов
+    	//$products = Product::get(['id', 'title']);
+
+    	//Не коллекция, а один объект
+    	//С самым маленьким id
+    	//$products = Product::first(); // лучше не применять, есть аналог лучше firstOrFail
+
+    	//Совершает транзакцию, лучше применять этот метод, а не first
+    	//$products = Product::firstOrFail();
+
+    	//Получить коллекцию продуктов с ценой меньше 100
+    	//$products = Product::where('price', '<', 100)->get();
+
+    	//Метод where можно применять многократно он вкючает в себя оператор and
+    	//Получить коллекцию продуктов с ценой в приделах от 100 до 200
+    	//$products = Product::where('price', '<', 100)
+    	//					->where('price', '>' 200)
+    	//					->get();
+
+    	//Получить коллекцию продкутов с ценой равной 150 (OR)ИЛИ(OR) равной или больше 200
+    	//$products = Product::where('price', '=', 150)
+    	//					->orWhere('price', '>=', 200)
+    	//					->get();
+
+    	//Получить коллекцию продуктов с ценой от 100 до 200
+    	//$products = Product::whereBetween('price', [100, 200])
+    	//					->get();
+
+    	//Получить коллекцию продуктов, в которой id продуктов равна 1,2,10
+    	//$products = Product::whereIn('id', [1, 2, 10])
+    	//					->get();
+
+    	//Аналог SELECT * и get();
+    	//$products = Product::all();
+
+    	//Получить колекцию с упорядоченными кортежами по убывания
+    	//$products = Product::orderBy('price', 'DESC')
+    	//					->get();
+
+    	//Почучить первые 10 кортежей с упорядочиванием по возрастанию				
+    	//$products = Product::orderBy('price', 'ASC')
+    	//				->take(10)
+    	//				->get();
+
+    	//Все указанные методы унаследованы моделью от классов состовляющих illuminate и Eloquent
+    	//Для того что бы посмотреть все методы этих классов, можно посмотреть документацию или посмотреть исходный код классов.
+
+    	//Вернёт объект с ID = 100
+    	//$products = Product::find(100);
+
+    	//Тоже самое но с транзакцией
+    	//$products = Product::findOrFail(100);
+
+    	//Создаём новый объект продукта
+    	//В БД он пока не сохранён
+    	//$products = new Product();
+    	//$products->price = 200;
+    	//Сохраняем объект в БД
+    	//$products->save();
+
+    	//Второй способ(редко используется)
+    	//Создаёт новый объект продукта и сразу же записывает его в БД
+    	//$products = Product::create(); //Так лучше не делать
+    	//$products = Product::create([
+    	//	'title' => 'Молоко',
+    	//	'price' => 80.89
+    	//]);
+
+    	//$products->price = 100;
+    	//В это случае save() сработает как update() на все атрибуты
+    	//$products->save();
+
+    	// Пример изменения кортежа
+    	//$products = Product::where('price', '<', 100)
+    	//					->get();
+    	//foreach ($products as $product) {
+    	//	$product->price = $product->price * 2;
+    	//	$product->save();
+    	//}
+
+
+    	//Найдём продукт с id = 5
+    	//$products = Product->findOrFail(5);
+    	//$products->price = $products->price * 3;
+    	//$products->update(['price' =>]);
