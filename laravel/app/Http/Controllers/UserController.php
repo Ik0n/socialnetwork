@@ -226,10 +226,13 @@ class UserController extends Controller
     }
 
     public function addAvatarToUser(User $user) {
+        $authUserName = Auth::user()->getAuthIdentifier();
+
 
         return view('layouts.users.addAvatarToUser', [
             'user' => $user,
             'id' => Auth::user()->getAuthIdentifier(),
+            'authUserName' => $authUserName,
         ]);
     }
 
@@ -253,6 +256,7 @@ class UserController extends Controller
     public function storeAvatarToUser(User $user, CreateImageRequest $request) {
         $file = $request->file('file');
         $filename = $this->fixedStore($file, '', $this->disk);
+        $authUserName = Auth::user()->getAuthIdentifier();
 
         try {
             $attributes = $request->only(['filename']);
@@ -266,6 +270,7 @@ class UserController extends Controller
 
         return redirect(route('users.show.user', [
             'user' => $user->name,
+            'authUserName' => $authUserName,
         ]));
     }
 
