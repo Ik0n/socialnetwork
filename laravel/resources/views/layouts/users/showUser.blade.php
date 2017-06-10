@@ -208,7 +208,12 @@
                             <div class="col-lg-offset-2">
                                 <table class="message text-left">
                                     <tr class="autor-message-c"><td rowspan="2">
-                                            <img src="{{ asset('storage/images/' . $c->filename) }}" alt="" class="img-rounded img-crop-center-c">
+                                            @if($c->filenameAvatarUser == "qqq")
+                                                <img src="{{ asset('storage/images/' . "defavatar.png") }}" alt="" class="img-rounded img-crop-center">
+                                            @endif
+                                            @if($c->filenameAvatarUser != "qqq")
+                                                <img src="{{ asset('storage/images/' . $c->filenameAvatarUser) }}" alt="" class="img-rounded img-crop-center">
+                                            @endif
                                         </td><td class="tableuser">{{ $c->name }}</td>
                                         <td rowspan="2" align="right" width="70%">
                                                 @if($c->user_id == $authUser)

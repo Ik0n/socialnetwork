@@ -156,7 +156,7 @@ class UserController extends Controller
 
         foreach ($comments as $c) {
             $c['name'] = User::findOrFail($c->user_id)->name;
-            $c['filename'] = User::findOrFail($c->user_id)->filename;
+            $c['filenameAvatarUser'] = User::findOrFail($c->user_id)->filename;
         }
 
         return view('layouts.users.showUser', [

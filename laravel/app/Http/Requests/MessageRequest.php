@@ -26,7 +26,6 @@ class MessageRequest extends FormRequest
         return [
             'content' => [
                 'min:1',
-                'regex:/^[\dA-ZЁА-Я][ \da-zа-яё]*$/u',
                 'required',
             ]
         ];
