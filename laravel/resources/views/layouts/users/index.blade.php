@@ -8,8 +8,24 @@
         <tr class="history-tr-table">
             <td colspan="11"> Users </td>
         </tr>
-    @foreach($users as $u)
+        <tr>
+        {{ Form::model(null , [
+            'method' => 'GET',
+            'route' => [
+            'users.index',
 
+        ]])
+        }}
+
+        {{ Form::label('search', "Поиск") }}
+        {{ Form::text('search') }}
+
+        {{ Form::submit('Поиск') }}
+
+        {{ Form::close() }}
+        </tr>
+
+    @foreach($searchUsers as $u)
         <tr class="history-tr-table">
             <td> {{ $u->name }} </td>
             <td> {{ $u->email }} </td>

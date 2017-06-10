@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
-    protected $fillable = ['content','user_id_recipient','user_id_sender'];
+    protected $fillable = ['content','user_id_recipient','user_id_sender','filename'];
 
     public function tags() {
         return $this->belongsToMany(Tag::class);
@@ -18,6 +18,10 @@ class Message extends Model
 
     public function comments() {
         return $this->belongsTo(Comment::class);
+    }
+
+    public function likes() {
+        return $this->belongsToMany(User::class, 'likes');
     }
 
 }

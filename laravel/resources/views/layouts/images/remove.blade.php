@@ -1,11 +1,11 @@
 {{
 Form::model ( $image, [
-            'method' => 'DELETE',
-            'route' => [
-                'images.destroy' ,
-                'id' => $image->id,
-                ]
-            ])
+'method' => 'DELETE',
+'route' => [
+'images.destroy' ,
+'id' => $image->id,
+]
+])
 }}
 
 <div class="form-group">

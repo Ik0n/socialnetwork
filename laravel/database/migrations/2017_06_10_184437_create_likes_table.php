@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMessagesTable extends Migration
+class CreateLikesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,28 +13,25 @@ class CreateMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('likes', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('content');
 
-            $table->integer('user_id_recipient')
+            $table->integer('message_id')
                 ->unsigned();
-            $table->foreign('user_id_recipient')
+            $table->foreign('message_id')
+                ->references('id')
+                ->on('messages')
+                ->onDelete('CASCADE')
+                ->onUpdate('RESTRICT');
+
+            $table->integer('user_id')
+                ->unsigned();
+            $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('CASCADE')
                 ->onUpdate('RESTRICT');
-
-            $table->integer('user_id_sender')
-                ->unsigned();
-            $table->foreign('user_id_sender')
-                ->references('id')
-                ->on('users')
-                ->onDelete('CASCADE')
-                ->onUpdate('RESTRICT');
-
-            $table->string('filename', 191);
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -46,6 +43,6 @@ class CreateMessagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('likes');
     }
 }

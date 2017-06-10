@@ -29,6 +29,10 @@ class User extends Authenticatable
         return $this->hasMany(Image::class, 'user_id_sender');
     }
 
+    public function likes() {
+        return $this->belongsToMany(Message::class, 'likes', 'user_id','post_id');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

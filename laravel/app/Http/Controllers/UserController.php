@@ -9,6 +9,7 @@ use App\Message;
 use App\User;
 use App\Tag;
 use App\Image;
+use App\Like;
 use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,8 +59,8 @@ class UserController extends Controller
         }
         else {
             return redirect(route('users.show.user', [
-                'user' => $user,
-                'authUserName' => $authUserName
+                'user' => $authUserName,
+                //'authUserName' => $authUserName
                 ]));
         }
 
@@ -107,13 +108,16 @@ class UserController extends Controller
         return redirect(route('users.index'));
     }
 
-    public function index() {
+    public function index(Request $request) {
         $authUser = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
+        $searchString = $request->only('search');
+        $searchUser = User::where('name', 'LIKE', "%" . $searchString['search'] . "%")->get();
 
         return view('layouts.users.index', [
            'users' => User::orderBy('name', 'ASC')
                                     ->get(),
             'authUserName' => $authUser,
+            'searchUsers' => $searchUser,
         ]);
     }
 
@@ -133,9 +137,17 @@ class UserController extends Controller
         $authUser = Auth::user()->getAuthIdentifier();
         $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
 
+        $likes = Like::get();
+
         foreach ($messages as $m) {
             $m['name'] = User::findOrFail($m->user_id_sender)->name;
-            $m['filename'] = user::findOrFail($m->user_id_sender)->filename;
+            $m['filenameAvatarUser'] = User::findOrFail($m->user_id_sender)->filename;
+            $m['likes'] = 0;
+            foreach ($likes as $like) {
+                if ($m->id == $like->message_id){
+                    $m['likes'] += 1;
+                }
+            }
         }
 
         foreach ($images as $i) {
@@ -185,17 +197,40 @@ class UserController extends Controller
         ]);
     }
 
-    public function storeMessageToUser(User $user, MessageRequest $request) {
+    public function storeMessageToUser(User $user, MessageRequest $request, CreateImageRequest $imgrequest) {
         $id = Auth::user()->getAuthIdentifier();
-        $attributes = $request->only(['content', 'tag_id']);
+        $attributes = $request->only(['content', 'tag_id', 'filename']);
         $attributes['user_id_recipient'] = $user->id;
         $attributes['user_id_sender'] = $id;
+        $attributes['filename'] = $imgrequest->file;
+
+        if($attributes['filename'] == null) {
+            $attributes['filename'] = "not";
+            $message = Message::create($attributes);
+            if ($attributes['tag_id'] != null) {
+                $message->tags()->attach($this->createAndGetTags($attributes['tag_id']));
+            }
+        }
+        else {
+            $file = $imgrequest->file('file');
+            $filename = $this->fixedStore($file, '', $this->disk);
+
+            try {
+                $attributes['filename'] = $filename;
+                $message = Message::create($attributes);
+                if ($attributes['tag_id'] != null) {
+                    $message->tags()->attach($this->createAndGetTags($attributes['tag_id']));
+                }
+            }
+            catch (\Exception $exception) {
+                Storage::disk($this->disk)->delete($filename);
+                throw $exception;
+            }
+        }
+
 
         //var_dump($attributes);
-        $message = Message::create($attributes);
-        if ($attributes['tag_id'] != null) {
-            $message->tags()->attach($this->createAndGetTags($attributes['tag_id']));
-        }
+
 
         /*$message->tags()->sync(
             $attributes['tag_id']
@@ -292,6 +327,15 @@ class UserController extends Controller
         ]));
     }
 
+    public function editAvatarFromUser(User $user) {
+        Storage::disk($this->disk)->delete($user->filename);
+        $user->update(['filename' => "qqq"]);
+
+        return redirect(route('users.show.user', [
+            'user' => $user->name,
+        ]));
+    }
+
     private function fixedStore($file, $path, $disk) {
         $folder = Storage::disk($disk)->getAdapter()->getPathPrefix();
         $temp = tempnam($folder, '');
@@ -331,6 +375,32 @@ class UserController extends Controller
         ]));
     }
 
+    public function isLikedByMe($id) {
+        $message = Message::findOrFail($id)->first();
+        if(Like::where("user_id","=", Auth::id())->where("message_id","=",$message->id)->exists()) {
+            return 'true';
+        }
+        return 'false';
+    }
+
+    public function like(User $user, $id) {
+        $existingLike = Like::where("message_id","=", $id)->where("user_id","=", Auth::user()->getAuthIdentifier())->first();
+
+        if($existingLike == null) {
+            Like::create([
+                'message_id' => $id,
+                'user_id' => Auth::user()->getAuthIdentifier(),
+            ]);
+        } else {
+            if ($existingLike != null) {
+                $existingLike->delete();
+            } else {
+                //$existingLike->restore();
+            }
+        }
+
+        return redirect(route('users.show.user', ['user' => $user->name]));
+    }
 
 
 }

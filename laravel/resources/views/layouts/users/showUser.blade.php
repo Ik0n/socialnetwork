@@ -14,14 +14,42 @@
                     @if($user->filename == "qqq")
                         <img src="{{ asset('storage/images/' . 'defavatar.png') }}" alt="" class="img-responsive img-thumbnail">
                         @if($user->id == $authUser)
-                            <a href="{{ route('users.addAvatarToUser' , ['user' => $user->name]) }}" class="add">Добавить аватарку</a>
+                               {{ Form::model($user , [
+                                   'method' => 'get',
+                                   'route' => [
+                                       'users.addAvatarToUser',
+                                       $user->name,
+                                       $user->filename
+                                   ]
+                               ]) }}
+                               {{ Form::submit("Добавить аватарку", ['class' => 'btn btn-primary']) }}
+                               {{ Form::close() }}
                         @endif
                         <hr>
                     @endif
                     @if($user->filename != "qqq")
                         <img src="{{ asset('storage/images/' . $user->filename) }}" alt="" class="img-responsive img-thumbnail">
-                        @if($user->id == $authUser)
-                            <a href="{{ route('users.addAvatarToUser' , ['user' => $user->name]) }}" class="add">Изменить аватарку</a>
+                            @if($user->id == $authUser)
+                                {{ Form::model($user , [
+                                    'method' => 'get',
+                                    'route' => [
+                                        'users.addAvatarToUser',
+                                        $user->name,
+                                        $user->filename
+                                    ]
+                                ]) }}
+                                {{ Form::submit("Изменить аватарку", ['class' => 'btn btn-primary']) }}
+                                {{ Form::close() }}
+                                {{ Form::model($user , [
+                                    'method' => 'POST',
+                                    'route' => [
+                                        'users.editAvatarFromUser',
+                                        $user->name,
+                                        $user->filename
+                                    ]
+                                ]) }}
+                                {{ Form::submit("Удалить аватарку", ['class' => 'btn btn-primary']) }}
+                                {{ Form::close() }}
                         @endif
                         <hr>
                     @endif
@@ -77,7 +105,7 @@
                 <div class="linetext">Добавить запись</div>
                 <div class="form-horizontal">
                     <div class="form-group">
-                        {{ Form::model(null, ['route' => ['users.storeMessageToUser',$user->name,]]) }}
+                        {{ Form::model(null, ['files' => true, 'method' => 'POST', 'route' => ['users.storeMessageToUser',$user->name,] ]) }}
                         <div class="col-md-11 col-md-offset-1">
                             {{ Form::textarea('content',null, ['class' => 'form-control'])}}
                         </div>
@@ -91,6 +119,19 @@
                     </div>
                 </div>
                     <div class="form-group">
+                        <div>
+                            {{ Form::label ('file', __ ('messages.image.file' )) }}
+                        </div>
+                        <div>
+                            {{
+                            Form::file('file', [
+                            'aria-describedby' => 'file-help',
+                            'class' => 'btn-block',
+                            ])
+                            }}
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-md-3 col-md-offset-9">
                             {{ Form::submit(trans('messages.messages.send'), ['class' => 'btn btn-primary']) }}
                             {{ Form::close() }}
@@ -103,16 +144,23 @@
                         <div>
                             <table class="message text-left">
                                 <tr class="autor-message"><td rowspan="2">
-                                <img src="{{ asset('storage/images/' . $m->filename) }}" alt="" class="img-rounded img-crop-center">
-                                 </td><td class="tableuser">{{ $m->name }}</td>
+                                        @if($m->filenameAvatarUser == "qqq")
+                                            <img src="{{ asset('storage/images/' . "defavatar.png") }}" alt="" class="img-rounded img-crop-center">
+                                        @endif
+                                        @if($m->filenameAvatarUser != "qqq")
+                                            <img src="{{ asset('storage/images/' . $m->filenameAvatarUser) }}" alt="" class="img-rounded img-crop-center">
+                                        @endif
+                                 </td><td class="tableuser">
+                                        <a href="{{ route('users.show.user', ['user' => $m->name]) }}">{{ $m->name }}</a>
+                                    </td>
                                  <td rowspan="2" align="right" width="70%">
-                                     @if($m->user_id_sender == $authUser)
+                                     @if($m->user_id_sender == $authUser or $m->user_id_recipient == $authUser)
                                          {{ Form::model($m , [
                                              'method' => 'DELETE',
                                              'route' => [
                                                  'users.deleteMessageFromUser',
-                                                 $user->name,
-                                                 $m->id,
+                                                    $user->name,
+                                                    $m->id,
                                              ]
                                          ]) }}
 
@@ -124,14 +172,35 @@
                             </table>
                         </div>
                     <div class="message-content">
-                    {{ $m->content }}
+                        {{ $m->content }}
                     </div>
+                        <div>
+                            @if($m->filename != "not")
+                                <img src="{{ asset('storage/images/' . $m->filename) }}" alt="" class="img-rounded img-crop-center">
+                            @endif
+                        </div>
                     <div class="tags-message text-right message-content">
                     Теги:
                         @foreach($m->tags as $t)
                             {{ $t->title . ", " }}
                         @endforeach
                     </div>
+                        <div>
+                            {{ $m->likes }}
+                        </div>
+                        <div>
+                            {{ Form::model($m , [
+                                'method' => 'POST',
+                                'route' => [
+                                    'users.like',
+                                    $user->name,
+                                    $m
+                                ]
+                            ]) }}
+
+                            {{ Form::submit("Like", ['class' => 'btn btn-primary']) }}
+                            {{ Form::close() }}
+                        </div>
                         <div class="lineline"></div>
                         <hr/>
 
@@ -206,6 +275,6 @@
         </div>
     </div>
     </div>
-    <a href="{{ route('users.addImageToUser' , ['user' => $user->name]) }}" class="add"><h2>Отправить картинку</h2></a>
+    <!-- <a href=" route('users.addImageToUser' , ['user' => $user->name]) " class="add"><h2>Отправить картинку</h2></a> -->
 @endsection
 

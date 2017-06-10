@@ -28,7 +28,6 @@ class CreateImageRequest extends FormRequest
                 'file',
                 'max:2000',
                 'mimetypes:image/gif,image/jpeg,image/png,image/svg+xml',
-                'required'
             ]
         ];
     }
