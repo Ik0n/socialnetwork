@@ -3,10 +3,11 @@
 @section('title', trans('messages.messages.creation'))
 
 @section('content')
-<div class="panel panel-default">
+
     <a href="{{ route('users.show.user' , ['user' => $user->name]) }}">Вернуться на свою страницу</a>
     
     {{
+
         Form::model (null , [
             'files' => true,
             'method' => 'POST',
@@ -71,5 +72,5 @@
     Form::close ()
 
     }}
-</div>
+
 @endsection

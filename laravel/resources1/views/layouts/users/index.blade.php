@@ -3,7 +3,6 @@
 @section('title', 'User list')
 
 @section('content')
-    <div class="panel panel-default">
     <table class="historyTable" align="center" border="1" width="100%">
         <tr class="history-tr-table">
             <td colspan="11"> Users </td>
@@ -29,5 +28,5 @@
 
     @endforeach
     </table>
-    </div>
+
 @endsection

@@ -3,15 +3,14 @@
 @section('title', trans('messages.messages.creation'))
 
 @section('content')
-<div class="panel panel-default">
-    <a href="{{ route('users.show.user' , ['user' => $user->name]) }}">Вернуться на свою страницу</a>
-    
+
     {{
-        Form::model (null , [
+
+        Form::model ($image, [
             'files' => true,
             'method' => 'POST',
             'route' => [
-            'users.storeAvatarToUser',
+            'users.storeImageToUser',
             $user->name,],
             ])
 
@@ -71,5 +70,5 @@
     Form::close ()
 
     }}
-</div>
+
 @endsection

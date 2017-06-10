@@ -49,31 +49,46 @@ class UserController extends Controller
 
     public function edit($id) {
         $user = User::findOrFail($id);
-
+        $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
+        if(Auth::user()->getAuthIdentifier() == $id) {
         return view('layouts.users.edit', [
-            'entity' => $user
+            'user' => $user,
+            'authUserName' => $authUserName,
         ]);
+        }
+        else {
+            return redirect(route('users.show.user', [
+                'user' => $user,
+                'authUserName' => $authUserName
+                ]));
+        }
+
     }
 
     public function update(UserRequest $request, $id) {
         $user = User::findOrFail($id);
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
 
         $attributes = $request->only([
-            'name',
-            'password',
             'email',
             'number',
             'first_name',
             'last_name',
             'third_name',
-            'county',
+            'country',
             'city',
         ]);
 
+        $attributes['name'] = $authUser->name;
+        $attributes['password'] = $authUser->password;
+
+
+
         $user->update($attributes);
 
-        return redirect(route('users.index', [
-                'id' => $user->id
+        return redirect(route('users.show.user', [
+                'user' => $user->name
+
             ]));
     }
 
@@ -107,11 +122,12 @@ class UserController extends Controller
         //var_dump($user->messages()->orderBy('content')->get());
         //var_dump($user);
         //var_dump($user);
-        $messages = $user->myReceivedMessages()->orderBy('created_at')->get();
+        $messages = $user->myReceivedMessages()->orderBy('created_at', 'DESC')->paginate(5);
         $messagesForDelete = $user->mySentMessages();
             //->paginate(5);
         $images = $user->myReceivedImages()->orderBy('created_at')->get();
         $avatar = $user->findOrFail(Auth::user()->getAuthIdentifier())->filename;
+
         $comments = Comment::get();
         $tags = Tag::orderBy('title')->pluck('title', 'id');
         $authUser = Auth::user()->getAuthIdentifier();
@@ -119,6 +135,7 @@ class UserController extends Controller
 
         foreach ($messages as $m) {
             $m['name'] = User::findOrFail($m->user_id_sender)->name;
+            $m['filename'] = user::findOrFail($m->user_id_sender)->filename;
         }
 
         foreach ($images as $i) {
@@ -127,6 +144,7 @@ class UserController extends Controller
 
         foreach ($comments as $c) {
             $c['name'] = User::findOrFail($c->user_id)->name;
+            $c['filename'] = User::findOrFail($c->user_id)->filename;
         }
 
         return view('layouts.users.showUser', [
@@ -226,7 +244,7 @@ class UserController extends Controller
     }
 
     public function addAvatarToUser(User $user) {
-        $authUserName = Auth::user()->getAuthIdentifier();
+        $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
 
 
         return view('layouts.users.addAvatarToUser', [
@@ -300,6 +318,15 @@ class UserController extends Controller
         $comment = Comment::create($attributes);
 
         return redirect(route('users.show.user', [
+            'user' => $user->name,
+        ]));
+    }
+
+    public function deleteCommentFromMessage(User $user, $id) {
+        $comment = Comment::findOrFail($id);
+        $comment->delete($id);
+
+        return redirect(route("users.show.user", [
             'user' => $user->name,
         ]));
     }

@@ -86,6 +86,7 @@ Route::group(['prefix' => 'users'], function () {
    Route::get('{user}/avatar/create', "$controller@addAvatarToUser")->name('users.addAvatarToUser');
    Route::post('{user}/avatar/store', "$controller@storeAvatarToUser")->name('users.storeAvatarToUser');
    Route::post('{user}/messages/{message}/comments/store', "$controller@storeCommentToMessage")->name('users.storeCommentToMessage');
+   Route::delete('{user}/messages/{message}/comments/delete', "$controller@deleteCommentFromMessage")->name('users.deleteCommentFromMessage');
 });
 
 //Route::get('/test/', ['uses' => 'ProductController@test']);

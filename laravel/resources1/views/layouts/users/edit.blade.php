@@ -2,17 +2,25 @@
 
 @section('title', 'User editing')
 
-@section('content')
+@section('main')
 
-    {{ Form::model($user, [
+    <a href="{{ route('users.index') }}">
+        {{ trans('User list') }}
+    </a>
+
+    {{ Form::model($entity, [
             'method' => 'PUT',
             'route' => [
                 'users.update',
-                $user->id
+                $entity->id
             ]
         ])
     }}
 
+    {{ Form::label('login', 'Login') }}
+    {{ Form::text('login') }}
+    {{ Form::label('password', 'Password') }}
+    {{ Form::text('password') }}
     {{ Form::label('email', 'Email') }}
     {{ Form::text('email') }}
     {{ Form::label('number', 'Number') }}

@@ -4,6 +4,7 @@
 
 @section('content')
 
+
     {{ Form::model($entity, ['route' => [
         'users.storeMessageToUser',
         $user->name,
@@ -24,4 +25,5 @@
     {{ Form::submit(trans('messages.messages.send')) }}
 
     {{ Form::close() }}
+
 @endsection
