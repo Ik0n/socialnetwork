@@ -1,0 +1,215 @@
+.header-navbar {
+    margin: 15px 20px 0 0;
+}
+table {
+    border: 1px;
+    text-align: center;
+}
+
+img {
+    height: 500px;
+    width: 500px;
+}
+
+.add {
+    text-align: center;
+}
+.sendbtn {
+    right: 0;
+    top: 260px;
+    margin-right: 22px;
+    position:absolute;
+}
+.sender-image {
+    text-align: center;
+}
+
+textarea{
+    width: auto;
+
+    height:100px;
+    min-height:100px;
+    max-height:100px;
+}
+
+.infostyle{
+    text-align: left;
+    font-size: 14px;
+    border-spacing: 10px;
+}
+.thumbnailmy{
+    display:inline-block;
+    max-width:100%;
+    height:auto;
+    -webkit-transition:all .2s ease-in-out;
+    -o-transition:all .2s ease-in-out;
+    transition:all .2s ease-in-out
+}
+
+.thumbnailm{
+    display:block;
+    padding:4px;
+    margin-bottom:22px;
+    line-height:1.6;
+    background-color:#f5f8fa;
+    border:1px solid #ddd;
+    border-radius:4px;
+    -webkit-transition:border .2s ease-in-out;
+    transition:border .2s ease-in-out;
+}
+.btn-link{
+    border:none;
+    outline:none;
+    background:none;
+    cursor:pointer;
+    color:#337ab7;
+    padding:0;
+    font-family:inherit;
+    font-size:inherit;
+}
+body{
+    background: rgb(65,65,65);
+    min-width: 750px;
+}
+
+
+.textlight{
+    color: #a4a4a4;
+}
+
+.message{
+    display: inline;
+}
+
+.data-message{
+    font-size: 14px;
+}
+.tags-message{
+    font-size: 12px;
+    right: 0;
+    margin-right: 18px;
+    position:absolute;
+}
+.autor-message{
+    font-size: 22px;
+    color: #575454;
+}
+.data-message-c{
+    font-size: 10px;
+}
+.autor-message-c{
+    font-size: 15px;
+    color: #575454;
+}
+.btn-main {
+    height: 10px;
+}
+.panel-default{
+    padding: 5px;
+}
+.nameuser{
+    padding-left: 15px;
+}
+.btn-cmmnt{
+    padding-right: 18px;
+}
+.message-content{
+    padding: 10px;
+}
+.tdpad{
+    padding-top: 5px;
+}
+.tableuser{
+    padding-left: 10px;
+    width: 400px;
+}
+.img-crop-center{
+    object-fit: cover; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    height: 50px;
+    width: 50px;
+}
+.img-crop-center-list{
+    object-fit: cover; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    height: 150px;
+    width: 150px;
+}
+.img-crop-post{
+    object-fit: cover;
+    object-position: center;
+    height: 30%;
+    width: 80%;
+}
+
+.img-crop-center-c{
+    object-fit: cover; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    height: 40px;
+    width: 40px;
+}
+.linetext{
+    position: relative;
+    overflow: hidden;
+    font-size: 20px;
+}
+
+.align-right{
+    text-align: right;
+}
+
+.linetext:after {
+    display: inline-block;
+    content: "";
+    height: 2px;
+    border-radius: 2px;
+    background: #7c7c7c;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    margin-left: 10px;
+}
+.heart{
+    width:auto;
+    height:20px;
+    background-image:url('heart.png');
+    background-repeat: no-repeat;
+    background-position: 3px 3px;
+    background-size: 15px;
+    text-align: right;
+    text-indent: 1.3em;
+}
+hr {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #c1c1c1;
+}
+
+
+.btnmy {
+    display: inline-block;
+    padding: 0px 2px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857143;
+    text-align: right;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.centerimg{
+    width:200px;
+    height:auto;
+    align-content: center;
+    position: relative;
+}
