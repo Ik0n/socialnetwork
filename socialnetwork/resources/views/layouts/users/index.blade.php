@@ -50,7 +50,7 @@
                                 <tr class="data-message"><td class="tableuser">{{ trans('messages.regdate').': '.$u->created_at }}</td></tr>
                                 <? // @if($authUserName == "admin" and $u->name != "admin" or $authUser->admin == '1' and $u->admin == '0' and $u->name != 'admin' or $odmen == 1 and $u->name != 'admin' and $u->admin != '1')
                                 ?>
-                                @if($authUserName == "admin" and $u->name != "admin" or $authUser->admin == '1' and $u->admin == '0' and $u->name != 'admin')
+                                @if($authUserName == "Admin" and $u->name != "Admin" or $authUser->admin == '1' and $u->admin == '0' and $u->name != 'Admin')
                                 <tr><td>     {{ Form::model($u , [
                                              'method' => 'DELETE',
                                              'route' => [

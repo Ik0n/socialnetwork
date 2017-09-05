@@ -171,7 +171,7 @@
                                     </td>
                                  <td rowspan="2" align="right" width="70%">
 
-                                     @if($m->user_id_sender == $authUser or $m->user_id_recipient == $authUser or $authUserName == 'admin' or $odmen == '1' and $user->name != 'admin' and $user->admin != '1' and $m->user_id_sender != '1' and $m->admin != '1')
+                                     @if($m->user_id_sender == $authUser or $m->user_id_recipient == $authUser or $authUserName == 'Admin' or $odmen == '1' and $user->name != 'Admin' and $user->admin != '1' and $m->user_id_sender != '1' and $m->admin != '1')
                                          {{ Form::model($m , [
                                              'method' => 'DELETE',
                                              'route' => [
@@ -254,7 +254,7 @@
                                             </a>
                                         </td>
                                         <td rowspan="2" align="right" width="70%">
-                                                @if($c->user_id == $authUser or $user->id == $authUser or $authUserName == 'admin' or $odmen == '1' and $user->name != 'admin' and $c->user_id != 1 and $user->admin != '1' and $c->admin != '1')
+                                                @if($c->user_id == $authUser or $user->id == $authUser or $authUserName == 'Admin' or $odmen == '1' and $user->name != 'Admin' and $c->user_id != 1 and $user->admin != '1' and $c->admin != '1')
                                                     {{ Form::model($c , [
                                                         'method' => 'DELETE',
                                                         'route' => [
