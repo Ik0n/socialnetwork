@@ -11,7 +11,32 @@
     <div class="row">
        <div class="col-lg-4">
            <div class="panel panel-default">
-               <div class="nameuser"><h2>{{ $user->name }}</h2></div>
+               <div class="nameuser"><h2>{{ $user->name }}</h2>
+
+
+                   @if($userAuth->friends->contains($user))
+                       {{ Form::model($user , [
+                       'method' => 'DELETE',
+                       'route' => [
+                       'users.deleteFromFriends',
+                       $user->name
+                       ]
+                       ]) }}
+                       {{ Form::submit(trans('Удалить из друзей'), ['class' => 'btn-link']) }}
+                       {{ Form::close() }}
+                   @else
+                       {{ Form::model($user , [
+                       'method' => 'POST',
+                       'route' => [
+                       'users.addToFriends',
+                       $user->name
+                       ]
+                       ]) }}
+                       {{ Form::submit(trans('Добавить в друзья'), ['class' => 'btn-link']) }}
+                       {{ Form::close() }}
+                   @endif
+
+               </div>
                <div  class="thumbnailmy">
                    <div class="align-right ">
                     @if($user->filename == "qqq")

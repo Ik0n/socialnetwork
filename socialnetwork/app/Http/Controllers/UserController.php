@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Friend;
 use App\Http\Requests\CreateImageRequest;
 use App\Http\Requests\MessageRequest;
 use App\Likes_for_comments;
@@ -162,6 +163,12 @@ class UserController extends Controller
         $likes_for_messages = Likes_for_message::get();
         $likes_for_comments = Likes_for_comments::get();
 
+        $userAuth = User::findOrFail(Auth::user()->getAuthIdentifier());
+
+
+        //var_dump(User::findOrFail(Auth::user()->getAuthIdentifier())->friends());
+
+
         foreach ($messages as $m) {
             $m['name'] = User::findOrFail($m->user_id_sender)->name;
             $m['filenameAvatarUser'] = User::findOrFail($m->user_id_sender)->filename;
@@ -203,6 +210,7 @@ class UserController extends Controller
             'tags' => $tags,
             'authUser' => $authUser,
             'authUserName' => $authUserName,
+            'userAuth' => $userAuth,
             'messagesForDelete' => $messagesForDelete,
             'whoLikeThatMessage' => $likes_for_messages,
             'whoLikeThatComment' => $likes_for_comments,
@@ -515,5 +523,35 @@ class UserController extends Controller
         return redirect(route('users.myMessages.dialog', ['user' => $user->name, 'user2' => User::findOrFail(User::where("name","=",$user2)->get())->name]));
     }
 
+    public function addToFriends(User $user, Request $request) {
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
+        $attributes['user_id1'] = Auth::user()->getAuthIdentifier();
+        $attributes['user_id2'] = $user->id;
+
+        Friend::create($attributes);
+
+        return redirect(route('users.show.user', ['user' => $user->name]));
+    }
+
+    public function deleteFromFriends(User $user) {
+        $friend = Friend::where(['user_id1' => Auth::user()->getAuthIdentifier(), 'user_id2' => $user->id]);
+        $friend->delete(['user_id1' => Auth::user()->getAuthIdentifier(), 'user_id2' => $user->id]);
+
+        return redirect(route("users.show.user", [
+            'user' => $user->name,
+        ]));
+    }
+
+    public function myFriends(User $user) {
+        $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
+
+        return view('layouts.users.myFriends', [
+            'user' => $user,
+            'authUser' => $authUser,
+            'authUserName' => $authUserName,
+            'users' => User::orderBy('name', 'ASC')->get(),
+        ]);
+    }
 
 }

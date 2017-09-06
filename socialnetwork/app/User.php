@@ -10,7 +10,7 @@ class User extends Authenticatable
     use Notifiable;
 
     public function friends() {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'friends', 'user_id1', 'user_id2');
     }
 
     public function myReceivedMessages() {

@@ -28,6 +28,7 @@ Route::get('/', function () {
 Route::group(['prefix' => 'products'], function() {
     $controller = 'ProductController';
     Route::get('create', "$controller@create")->name('products.create');
+    Route::get('createJson', "$controller@createJson")->name('products.createJson');
     Route::post('store', "$controller@store")->name('products.store');
     Route::get('edit/{id}', "$controller@edit")->name('products.edit');
     Route::put('update/{id}', "$controller@update")->name('products.update');
@@ -95,6 +96,9 @@ Route::group(['prefix' => 'users'], function () {
    Route::get('{user}/myMessages', "$controller@myMessages")->name('users.myMessages');
    Route::get('{user}/myMessages/{user2}', "$controller@myMessagesDialog")->name('users.myMessages.dialog');
    Route::post('{user}/myMessages/{user2}/store', "$controller@usersMyMessageDialogStore")->name('users.myMessage.dialog.store');
+   Route::post('{user}/addToFriends', "$controller@addToFriends")->name('users.addToFriends');
+   Route::delete('{user}/deleteFromFriends', "$controller@deleteFromFriends")->name('users.deleteFromFriends');
+   Route::get('{user}/myFriends', "$controller@myFriends")->name('users.myFriends');
 
 });
 

@@ -36,7 +36,7 @@
                         </a>
                     </li>
                     <li><a href="{{ route('users.index') }}">{{trans('messages.users')}}</a></li>
-                    <li><a href="{{ route('users.myMessages', ['user' => $authUserName]) }}">Мои сообщения</a></li>
+                    <li><a href="{{ route('users.myFriends', ['user' => $authUserName]) }}">Мои друзья</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

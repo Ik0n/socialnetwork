@@ -5,13 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 use App\Product;
+use App\Contracts\Service;
 
 class ProductController extends Controller
 {
+
+    public function __construct(Service $service)
+    {
+        $this->service = $service;
+    }
+
+
+    public function createJson()
+    {
+        $product = $this->service->index();
+        return response()->json($product->toArray());
+    }
+
     public function create() {
         //Вывод формуляра HTML, для создания записи о товаре
         //Создаём объект в памяти компа
-        $product = new Product();
+        //$product = new Product();
+        $product = $this->service->index();
 
         //Выводим формуляр
         // resources/views/layouts/products/create.blade.php

@@ -1,4 +1,4 @@
-@extends('layouts.base')
+
 
 @section('title', trans('messages.product.creation'))
 
