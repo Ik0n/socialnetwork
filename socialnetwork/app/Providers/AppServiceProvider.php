@@ -28,5 +28,10 @@ class AppServiceProvider extends ServiceProvider
             'App\Contracts\Service',
             'App\Services\ProductService'
         );
+
+        $this->app->bind(
+            'App\Contracts\UserService',
+            'App\Services\UserService'
+        );
     }
 }

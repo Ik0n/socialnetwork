@@ -12,8 +12,7 @@
        <div class="col-lg-4">
            <div class="panel panel-default">
                <div class="nameuser"><h2>{{ $user->name }}</h2>
-
-
+                   @if($userAuth->name != $user->name)
                    @if($userAuth->friends->contains($user))
                        {{ Form::model($user , [
                        'method' => 'DELETE',
@@ -34,6 +33,7 @@
                        ]) }}
                        {{ Form::submit(trans('Добавить в друзья'), ['class' => 'btn-link']) }}
                        {{ Form::close() }}
+                   @endif
                    @endif
 
                </div>
