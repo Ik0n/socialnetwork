@@ -122,13 +122,13 @@ class UserController extends Controller
     }
 
     public function index(Request $request) {
-
         return view('layouts.users.index', [
             'users' => $this->service->index($request)['users'],
             'authUserName' => $this->service->index($request)['authUserName'],
             'authUser' => $this->service->index($request)['authUser'],
             'searchUsers' => $this->service->index($request)['searchUsers'],
             'odmen' => $this->service->index($request)['odmen'],
+            'userAuth' => $this->service->index($request)['userAuth'],
         ]);
     }
 
@@ -139,7 +139,6 @@ class UserController extends Controller
 
 
     public function showUser(User $user) {
-
         return view('layouts.users.showUser', [
            'user' => $this->service->showUser($user)['user'],
             'messages' => $this->service->showUser($user)['messages'],
@@ -164,12 +163,9 @@ class UserController extends Controller
 
     public function addMessageToUser(User $user, Request $request)
     {
-        $message = new Message();
         $tags = Tag::orderBy('title')->pluck('title', 'id');
         $id = Auth::user()->getAuthIdentifier();
-
         return view('layouts.users.addMessageToUser', [
-            'entity' => $message,
             'tags' => $tags,
             'id' => $id,
             'user' => $user,
@@ -177,9 +173,8 @@ class UserController extends Controller
     }
 
     public function storeMessageToUser(User $user, MessageRequest $request, CreateImageRequest $imgrequest) {
-        $this->service->storeMessageToUser($user,$request,$imgrequest);
         return redirect(route('users.show.user', [
-            'user' => $user->name,
+            'user' => $this->service->storeMessageToUser($user,$request,$imgrequest)['user'],
         ]));
     }
 
@@ -358,7 +353,7 @@ class UserController extends Controller
 
     public function addToFriends(User $user, Request $request) {
         return redirect(route('users.show.user', [
-            'user' => $user->name
+            'user' => $this->service->addToFriends($user,$request)['user'],
         ]));
     }
 
@@ -366,11 +361,18 @@ class UserController extends Controller
         return response()->json($this->service->addToFriends($user,$request));
     }
 
-    public function deleteFromFriends(User $user) {
+    public function deleteFromFriendsOnUserPage(User $user) {
         return redirect(route("users.show.user", [
             'user' => $this->service->deleteFromFriends($user)['user'],
         ]));
     }
+
+    public function deleteFromFriends(User $user) {
+        return redirect(route("users.myFriends", [
+            'user' => $this->service->deleteFromFriends($user)['authUser'],
+        ]));
+    }
+
 
     public function deleteFromFriendsJson(User $user) {
         return response()->json($this->service->deleteFromFriends($user));

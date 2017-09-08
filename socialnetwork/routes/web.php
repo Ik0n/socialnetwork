@@ -113,6 +113,7 @@ Route::group(['prefix' => 'users'], function () {
    Route::post('{user}/myMessages/{user2}/storeJson', "$controller@usersMyMessageDialogStoreJson")->name('users.myMessage.dialog.storeJson');
    Route::post('{user}/addToFriends', "$controller@addToFriends")->name('users.addToFriends');
    Route::post('{user}/addToFriendsJson', "$controller@addToFriendsJson")->name('users.addToFriendsJson');
+   Route::delete('{user}/deleteFromFriendsOnUserPage', "$controller@deleteFromFriendsOnUserPage")->name('users.deleteFromFriendsOnUserPage');
    Route::delete('{user}/deleteFromFriends', "$controller@deleteFromFriends")->name('users.deleteFromFriends');
    Route::delete('{user}/deleteFromFriendsJson', "$controller@deleteFromFriendsJson")->name('users.deleteFromFriendsJson');
    Route::get('{user}/myFriends', "$controller@myFriends")->name('users.myFriends');

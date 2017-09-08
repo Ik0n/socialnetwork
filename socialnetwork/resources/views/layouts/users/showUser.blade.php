@@ -15,14 +15,14 @@
                    @if($userAuth->name != $user->name)
                    @if($userAuth->friends->contains($user))
                        {{ Form::model($user , [
-                       'method' => 'DELETE',
-                       'route' => [
-                       'users.deleteFromFriends',
-                       $user->name
-                       ]
-                       ]) }}
-                       {{ Form::submit(trans('Удалить из друзей'), ['class' => 'btn-link']) }}
-                       {{ Form::close() }}
+                        'method' => 'DELETE',
+                        'route' => [
+                        'users.deleteFromFriendsOnUserPage',
+                        $user->name
+                        ]
+                        ]) }}
+                        {{ Form::submit(trans('Удалить из друзей'), ['class' => 'btn-link']) }}
+                        {{ Form::close() }}
                    @else
                        {{ Form::model($user , [
                        'method' => 'POST',
@@ -50,12 +50,14 @@
                     @endif
                     @if($user->filename != "qqq")
                         <img src="{{ asset('storage/images/' . $user->filename) }}" alt="" class="img-responsive img-rounded img-thumbnail">
-                            @if($user->id == $authUser  or $odmen = '1')
+                            @if($user->id == $authUser)
                              <div class="message">
                                  <div class="text-left">
                                      <a href="{{ route('users.addAvatarToUser' , ['user' => $user->name, $user->filename]) }}" class="add">{{trans('messages.editava')}}</a>
                                  </div>
                             </div>
+                            @endif
+                            @if($user->id == $authUser or $odmen == 1 and $user->admin == 0 and $user->id != 1 or $authUser == 1)
                             <div class="text-left">
                                 {{ Form::model($user , [
                                     'method' => 'POST',

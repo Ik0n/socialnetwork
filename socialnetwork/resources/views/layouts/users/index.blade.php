@@ -27,35 +27,56 @@
                             </div>
                         </div>
 
-                    @foreach($searchUsers as $u)
+                    @foreach($searchUsers as $user)
                         <div class="text-center">
                             <hr>
                             <table class="message text-left">
                                 <tr class="autor-message"><td rowspan="6">
-                                        <a href="{{ route('users.show.user', ['user' => $u->name]) }}">
-                                            @if($u->filename == "qqq")
+                                        <a href="{{ route('users.show.user', ['user' => $user->name]) }}">
+                                            @if($user->filename == "qqq")
                                                 <img src="{{ asset('storage/images/' . "defavatar.png") }}" alt="" class="img-rounded img-crop-center-list img-thumbnail">
                                             @endif
-                                            @if($u->filename != "qqq")
-                                                <img src="{{ asset('storage/images/' . $u->filename) }}" alt="" class="img-rounded img-crop-center-list img-thumbnail">
+                                            @if($user->filename != "qqq")
+                                                <img src="{{ asset('storage/images/' . $user->filename) }}" alt="" class="img-rounded img-crop-center-list img-thumbnail">
                                             @endif
                                         </a>
-                                    </td><td class="tableuser">
-                                        <a href="{{ route('users.show.user', ['user' => $u->name]) }}">{{ $u->name }}</a>
-                                    </td></tr>
-                                <tr class="data-message"><td class="tableuser">{{ $u->first_name.' '.$u->last_name.' '.$u->third_name }}</td></tr>
-                                <tr class="data-message"><td class="tableuser">{{ $u->city.', '.$u->country }}</td></tr>
-                                <tr class="data-message"><td class="tableuser">{{ trans('messages.num').': '.$u->number }}</td></tr>
-                                <tr class="data-message"><td class="tableuser">{{ trans('messages.email').': '.$u->email }}</td></tr>
-                                <tr class="data-message"><td class="tableuser">{{ trans('messages.regdate').': '.$u->created_at }}</td></tr>
+                                    </td>
+                                    <td class="tableuser">
+                                        <a href="{{ route('users.show.user', ['user' => $user->name]) }}">{{ $user->name }}</a>
+                                    </td>
+                                        @if($userAuth->name != $user->name)
+                                            @if($userAuth->friends->contains($user))
+                                                <td>
+                                                    Уже в друзьях
+                                                </td>
+                                            @else
+                                            <td>
+                                                {{ Form::model($user , [
+                                                    'method' => 'POST',
+                                                    'route' => [
+                                                        'users.addToFriends',
+                                                        $user->name
+                                                    ]
+                                                    ]) }}
+                                                {{ Form::submit(trans('Добавить в друзья'), ['class' => 'btn btn-primary']) }}
+                                                {{ Form::close() }}
+                                            </td>
+                                            @endif
+                                        @endif
+                                </tr>
+                                <tr class="data-message"><td class="tableuser">{{ $user->first_name.' '.$user->last_name.' '.$user->third_name }}</td></tr>
+                                <tr class="data-message"><td class="tableuser">{{ $user->city.', '.$user->country }}</td></tr>
+                                <tr class="data-message"><td class="tableuser">{{ trans('messages.num').': '.$user->number }}</td></tr>
+                                <tr class="data-message"><td class="tableuser">{{ trans('messages.email').': '.$user->email }}</td></tr>
+                                <tr class="data-message"><td class="tableuser">{{ trans('messages.regdate').': '.$user->created_at }}</td></tr>
                                 <? // @if($authUserName == "admin" and $u->name != "admin" or $authUser->admin == '1' and $u->admin == '0' and $u->name != 'admin' or $odmen == 1 and $u->name != 'admin' and $u->admin != '1')
                                 ?>
-                                @if($authUserName == "Admin" and $u->name != "Admin" or $authUser->admin == '1' and $u->admin == '0' and $u->name != 'Admin')
-                                <tr><td>     {{ Form::model($u , [
+                                @if($authUserName == "Admin" and $user->name != "Admin" or $authUser->admin == '1' and $user->admin == '0' and $user->name != 'Admin')
+                                <tr><td>     {{ Form::model($user , [
                                              'method' => 'DELETE',
                                              'route' => [
                                                  'users.destroy',
-                                                  $u->id
+                                                  $user->id
                                              ]
                                          ]) }}
                                         {{ Form::submit("Удалить"), ['class' => 'btn btn-primary'] }}

@@ -158,6 +158,10 @@ body{
     text-align: right;
 }
 
+.align-left {
+    text-align: left;
+}
+
 .linetext:after {
     display: inline-block;
     content: "";
@@ -212,4 +216,8 @@ hr {
     height:auto;
     align-content: center;
     position: relative;
+}
+
+.align-center {
+    text-align: center;
 }

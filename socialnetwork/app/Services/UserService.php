@@ -44,10 +44,10 @@ class UserService implements \App\Contracts\UserService
         $searchUsers = User::where('name', 'LIKE', "%" . $searchString['search'] . "%")->get();
         $users = User::orderBy('name', 'ASC')->get();
 
-
         return [
             'authUserName' => $authUserName,
             'authUser' => $authUser,
+            'userAuth' => User::findOrFail(Auth::user()->getAuthIdentifier()),
             'odmen' => $odmen,
             'searchUsers' => $searchUsers,
             'users' => $users
@@ -162,7 +162,6 @@ class UserService implements \App\Contracts\UserService
         else {
             $file = $imgrequest->file('file');
             $filename = $this->fixedStore($file, '', $this->disk);
-
             try {
                 $attributes['filename'] = $filename;
                 $message = Message::create($attributes);
@@ -175,8 +174,9 @@ class UserService implements \App\Contracts\UserService
                 throw $exception;
             }
         }
-
-        return $message;
+        return [
+            'user' => $user,
+        ];
     }
 
     private function fixedStore($file, $path, $disk) {
@@ -321,13 +321,14 @@ class UserService implements \App\Contracts\UserService
         ];
     }
 
-    public function myMessageDialog(User $user, $user2) {
+    public function myMessagesDialog(User $user, $user2) {
         $myRecievedMessages = Message::where("user_id_recipient","=", Auth::user()->getAuthIdentifier())->where("private","!=","0")->get();
         $mySendMessages = Message::where("user_id_sender","=", Auth::user()->getAuthIdentifier())->where("private","!=","0")->get();
         $messages = Message::where("private", "!=", "0")->orderBy('created_at','DESK')->get();
         $us = User::where("name","=",$user2)->get();
         foreach ($messages as $message) {
             $message['user_name_sender'] = User::findOrFail($message->user_id_sender)->name;
+            $message['user_avatar_sender'] = User::findOrFail($message->user_id_sender)->filename;
             $message['user_name_recipient'] = User::findOrFail($message->user_id_recipient)->name;
         }
 
@@ -349,15 +350,15 @@ class UserService implements \App\Contracts\UserService
         $attributes['tag_id'] = '';
         $attributes['filename'] = 'not';
         $attributes['private'] = 1;
-        Message::create($attributes);
         return [
             'user' => $user->name,
             'user2' => User::findOrFail(User::where("name","=",$user2)->get())->name,
+            Message::create($attributes),
         ];
+
     }
 
     public function addToFriends(User $user, Request $request) {
-        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
         $attributes['user_id1'] = Auth::user()->getAuthIdentifier();
         $attributes['user_id2'] = $user->id;
         Friend::create($attributes);
@@ -370,7 +371,8 @@ class UserService implements \App\Contracts\UserService
         $friend = Friend::where(['user_id1' => Auth::user()->getAuthIdentifier(), 'user_id2' => $user->id]);
         $friend->delete(['user_id1' => Auth::user()->getAuthIdentifier(), 'user_id2' => $user->id]);
         return [
-            'user' => $user->name,
+            'user' => $user,
+            'authUser' => User::findOrFail(Auth::user()->getAuthIdentifier())->name,
         ];
     }
 
