@@ -21,6 +21,10 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'user_id_sender');
     }
 
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
+
     public function myReceivedImages() {
         return $this->hasMany(Image::class, 'user_id_recipient');
     }

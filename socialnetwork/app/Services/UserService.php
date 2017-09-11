@@ -13,7 +13,7 @@ use App\Friend;
 use App\Http\Requests\CreateImageRequest;
 use App\Http\Requests\MessageRequest;
 use App\Likes_for_comments;
-use App\Likes_for_message;
+use App\Likes_for_messages;
 use App\Message;
 use App\User;
 use App\Tag;
@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 
 class UserService implements \App\Contracts\UserService
 {
+
     public function __construct()
     {
         $this->disk = 'image_disk';
@@ -36,53 +37,36 @@ class UserService implements \App\Contracts\UserService
         if (Auth::user() == null) {
             return redirect(route('login'));
         }
-
-        $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
         $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
-        $odmen = User::findOrFail(Auth::user()->getAuthIdentifier())->admin;
-        $searchString = $request->only('search');
-        $searchUsers = User::where('name', 'LIKE', "%" . $searchString['search'] . "%")->get();
-        $users = User::orderBy('name', 'ASC')->get();
-
         return [
-            'authUserName' => $authUserName,
+            'authUserName' => $authUser->name,
             'authUser' => $authUser,
-            'userAuth' => User::findOrFail(Auth::user()->getAuthIdentifier()),
-            'odmen' => $odmen,
-            'searchUsers' => $searchUsers,
-            'users' => $users
+            'userAuth' => $authUser,
+            'odmen' => $authUser->admin,
+            'searchUsers' => User::where('name', 'LIKE', "%" . $request->only('search')['search'] . "%")->get(),
+            'users' => User::orderBy('name', 'ASC')->get(),
         ];
     }
+
+//array_filter
+//array_map
+//array_reduce
 
     public function showUser(User $user) {
         if (Auth::user() == null) {
             return redirect(route('login'));
         }
-
-        //$userok = User::where('name' , '=', $user)->take();
-        //var_dump($user->messages()->orderBy('content')->get());
-        //var_dump($user);
-        //var_dump($user);
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
         $messages = $user->myReceivedMessages()->where('private','=','0')->orderBy('created_at', 'DESC')->paginate(5);
         $messagesForDelete = $user->mySentMessages();
-        //->paginate(5);
         $images = $user->myReceivedImages()->orderBy('created_at')->get();
-        $avatar = $user->findOrFail(Auth::user()->getAuthIdentifier())->filename;
-
+        $avatar = $authUser->filename;
         $comments = Comment::get();
         $tags = Tag::orderBy('title')->pluck('title', 'id');
-        $authUser = Auth::user()->getAuthIdentifier();
-        $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
-        $odmen = User::findOrFail(Auth::user()->getAuthIdentifier())->admin;
-        $likes_for_messages = Likes_for_message::get();
+        $authUserName = $authUser->name;
+        $odmen = $authUser->admin;
+        $likes_for_messages = Likes_for_messages::get();
         $likes_for_comments = Likes_for_comments::get();
-
-        $userAuth = User::findOrFail(Auth::user()->getAuthIdentifier());
-
-
-        //var_dump(User::findOrFail(Auth::user()->getAuthIdentifier())->friends());
-
-
         foreach ($messages as $m) {
             $m['name'] = User::findOrFail($m->user_id_sender)->name;
             $m['filenameAvatarUser'] = User::findOrFail($m->user_id_sender)->filename;
@@ -91,11 +75,24 @@ class UserService implements \App\Contracts\UserService
             foreach ($likes_for_messages as $like) {
                 if ($m->id == $like->message_id){
                     $m['likes'] += 1;
-                    if ($like->user_id == $authUser)
-                        $m['likeItAuth'] = $authUser;
+                    if ($like->user_id == $authUser->id)
+                        $m['likeItAuth'] = $authUser->id;
                 }
             }
         }
+
+
+        $collection = $user->myReceivedMessages()->get()->map(function ($message) {
+            $message['likes'] = 0;
+            $x = $message->likes_for_messages()->get()->map(function ($like) use ($message) {
+                $message['likes'] += 1;
+                return $message;
+            });
+            return $x;
+        });
+
+        var_dump($collection);
+
 
         foreach ($images as $i) {
             $i['name'] = User::findOrFail($i->user_id_sender)->name;
@@ -109,8 +106,8 @@ class UserService implements \App\Contracts\UserService
             foreach ($likes_for_comments as $like) {
                 if ($c->id == $like->comment_id){
                     $c['likes'] += 1;
-                    if ($like->user_id == $authUser)
-                        $c['likeItAuth'] = $authUser;
+                    if ($like->user_id == $authUser->id)
+                        $c['likeItAuth'] = $authUser->id;
                 }
             }
         }
@@ -125,7 +122,7 @@ class UserService implements \App\Contracts\UserService
             'tags' => $tags,
             'authUser' => $authUser,
             'authUserName' => $authUserName,
-            'userAuth' => $userAuth,
+            'userAuth' => $authUser,
             'messagesForDelete' => $messagesForDelete,
             'whoLikeThatMessage' => $likes_for_messages,
             'whoLikeThatComment' => $likes_for_comments,
@@ -201,12 +198,11 @@ class UserService implements \App\Contracts\UserService
     }
 
     public function addAvatarToUser(User $user) {
-        $authUserName = User::findOrFail(Auth::user()->getAuthIdentifier())->name;
-        $authUserId = Auth::user()->getAuthIdentifier();
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
         return [
             'user' => $user,
-            'authUserName' => $authUserName,
-            'authUserId' => $authUserId,
+            'authUserName' => $authUser->name,
+            'authUserId' => $authUser->id,
             ];
     }
 
@@ -259,18 +255,19 @@ class UserService implements \App\Contracts\UserService
 
     public function isLikedByMe_for_message($id) {
         $message = Message::findOrFail($id)->first();
-        if(Likes_for_message::where("user_id","=", Auth::id())->where("message_id","=",$message->id)->exists()) {
+        if(Likes_for_messages::where("user_id","=", Auth::id())->where("message_id","=",$message->id)->exists()) {
             return 'true';
         }
         return 'false';
     }
 
     public function like_for_message(User $user, $id) {
-        $existingLike = Likes_for_message::where("message_id","=", $id)->where("user_id","=", Auth::user()->getAuthIdentifier())->first();
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
+        $existingLike = Likes_for_messages::where("message_id","=", $id)->where("user_id","=", Auth::user()->getAuthIdentifier())->first();
         if($existingLike == null) {
-            Likes_for_message::create([
+            Likes_for_messages::create([
                 'message_id' => $id,
-                'user_id' => Auth::user()->getAuthIdentifier(),
+                'user_id' => $authUser->id,
             ]);
         } else {
             if ($existingLike != null) {
@@ -280,7 +277,7 @@ class UserService implements \App\Contracts\UserService
             }
         }
         return [
-            'authUserName' => User::findOrFail(Auth::user()->getAuthIdentifier())->name
+            'authUserName' => $authUser->name
         ];
     }
 
@@ -293,11 +290,12 @@ class UserService implements \App\Contracts\UserService
     }
 
     public function like_for_comment(User $user, $id) {
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
         $existingLike = Likes_for_comments::where("comment_id","=", $id)->where("user_id","=", Auth::user()->getAuthIdentifier())->first();
         if($existingLike == null) {
             Likes_for_comments::create([
                 'comment_id' => $id,
-                'user_id' => Auth::user()->getAuthIdentifier(),
+                'user_id' => $authUser->id,
             ]);
         } else {
             if ($existingLike != null) {
@@ -307,7 +305,7 @@ class UserService implements \App\Contracts\UserService
             }
         }
         return [
-            'authUserName' => User::findOrFail(Auth::user()->getAuthIdentifier())->name
+            'authUserName' => $authUser->name,
         ];
     }
 
@@ -350,13 +348,13 @@ class UserService implements \App\Contracts\UserService
         $attributes['tag_id'] = '';
         $attributes['filename'] = 'not';
         $attributes['private'] = 1;
+        Message::create($attributes);
         return [
             'user' => $user->name,
             'user2' => User::findOrFail(User::where("name","=",$user2)->get())->name,
-            Message::create($attributes),
         ];
-
     }
+
 
     public function addToFriends(User $user, Request $request) {
         $attributes['user_id1'] = Auth::user()->getAuthIdentifier();
@@ -368,19 +366,21 @@ class UserService implements \App\Contracts\UserService
     }
 
     public function deleteFromFriends(User $user) {
-        $friend = Friend::where(['user_id1' => Auth::user()->getAuthIdentifier(), 'user_id2' => $user->id]);
-        $friend->delete(['user_id1' => Auth::user()->getAuthIdentifier(), 'user_id2' => $user->id]);
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
+        $friend = Friend::where(['user_id1' => $authUser->id, 'user_id2' => $user->id]);
+        $friend->delete(['user_id1' => $authUser->id, 'user_id2' => $user->id]);
         return [
             'user' => $user,
-            'authUser' => User::findOrFail(Auth::user()->getAuthIdentifier())->name,
+            'authUser' => $authUser->name,
         ];
     }
 
     public function myFriends(User $user) {
+        $authUser = User::findOrFail(Auth::user()->getAuthIdentifier());
         return [
           'user' => $user,
-          'authUser' => User::findOrFail(Auth::user()->getAuthIdentifier()),
-          'authUserName' => User::findOrFail(Auth::user()->getAuthIdentifier())->name,
+          'authUser' => $authUser,
+          'authUserName' => $authUser->name,
           'users' => User::orderBy('name', 'ASC')->get(),
         ];
     }

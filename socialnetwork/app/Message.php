@@ -21,7 +21,7 @@ class Message extends Model
     }
 
     public function likes_for_messages() {
-        return $this->belongsToMany(User::class, 'likes_for_message');
+        return $this->belongsTo(User::class, 'likes_for_message');
     }
 
     public function likes_for_comments() {

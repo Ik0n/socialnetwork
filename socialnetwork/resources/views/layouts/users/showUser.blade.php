@@ -42,7 +42,7 @@
                     @if($user->filename == "qqq")
                         <img src="{{ asset('storage/images/' . 'defavatar.png') }}" alt="" class="img-responsive img-rounded img-thumbnail">
                            <div class="text-left">
-                                @if($user->id == $authUser)
+                                @if($user->id == $authUser->id)
                                        <a href="{{ route('users.addAvatarToUser' , ['user' => $user->name, $user->filename]) }}" class="add">{{trans('messages.addava')}}</a>
                                 @endif
                            </div>
@@ -50,14 +50,14 @@
                     @endif
                     @if($user->filename != "qqq")
                         <img src="{{ asset('storage/images/' . $user->filename) }}" alt="" class="img-responsive img-rounded img-thumbnail">
-                            @if($user->id == $authUser)
+                            @if($user->id == $authUser->id)
                              <div class="message">
                                  <div class="text-left">
                                      <a href="{{ route('users.addAvatarToUser' , ['user' => $user->name, $user->filename]) }}" class="add">{{trans('messages.editava')}}</a>
                                  </div>
                             </div>
                             @endif
-                            @if($user->id == $authUser or $odmen == 1 and $user->admin == 0 and $user->id != 1 or $authUser == 1)
+                            @if($user->id == $authUser->id or $odmen == 1 and $user->admin == 0 and $user->id != 1 or $authUser->id == 1)
                             <div class="text-left">
                                 {{ Form::model($user , [
                                     'method' => 'POST',
@@ -76,8 +76,8 @@
                    </div>
                 </div>
                <div class="align-right">
-               @if($user->id == $authUser)
-                   <a href="{{ route('users.edit' , ['id' => $authUser]) }}" class="add">{{trans('messages.editinfo')}}</a>
+               @if($user->id == $authUser->id)
+                   <a href="{{ route('users.edit' , ['id' => $authUser->id]) }}" class="add">{{trans('messages.editinfo')}}</a>
                @endif
                </div>
                 <div class="linetext">{{trans('messages.maininfo')}}</div>
@@ -198,7 +198,7 @@
                                     </td>
                                  <td rowspan="2" align="right" width="70%">
 
-                                     @if($m->user_id_sender == $authUser or $m->user_id_recipient == $authUser or $authUserName == 'Admin' or $odmen == '1' and $user->name != 'Admin' and $user->admin != '1' and $m->user_id_sender != '1' and $m->admin != '1')
+                                     @if($m->user_id_sender == $authUser->id or $m->user_id_recipient == $authUser->id or $authUserName == 'Admin' or $odmen == '1' and $user->name != 'Admin' and $user->admin != '1' and $m->user_id_sender != '1' and $m->admin != '1')
                                          {{ Form::model($m , [
                                              'method' => 'DELETE',
                                              'route' => [
@@ -245,7 +245,7 @@
                        ]) }}
                        {{ Form::submit($m->likes, ['class' => 'btnmy btn-info heart']) }}
                        {{ Form::close() }}
-                       @if($m->likeItAuth == $authUser)
+                       @if($m->likeItAuth == $authUser->id)
                            Вы поставили отметку мне нравится
                        @endif
                         </div>
@@ -281,7 +281,7 @@
                                             </a>
                                         </td>
                                         <td rowspan="2" align="right" width="70%">
-                                                @if($c->user_id == $authUser or $user->id == $authUser or $authUserName == 'Admin' or $odmen == '1' and $user->name != 'Admin' and $c->user_id != 1 and $user->admin != '1' and $c->admin != '1')
+                                                @if($c->user_id == $authUser->id or $user->id == $authUser->id or $authUserName == 'Admin' or $odmen == '1' and $user->name != 'Admin' and $c->user_id != 1 and $user->admin != '1' and $c->admin != '1')
                                                     {{ Form::model($c , [
                                                         'method' => 'DELETE',
                                                         'route' => [
@@ -317,7 +317,7 @@
                            ]) }}
                            {{ Form::submit($c->likes, ['class' => 'btnmy btn-info heart']) }}
                            {{ Form::close() }}
-                           @if($c->likeItAuth == $authUser)
+                           @if($c->likeItAuth == $authUser->id)
                                Вы поставили отметку мне нравится
                            @endif
                          </div>

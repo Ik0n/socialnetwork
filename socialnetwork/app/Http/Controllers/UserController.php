@@ -122,13 +122,14 @@ class UserController extends Controller
     }
 
     public function index(Request $request) {
+        $attributes = $this->service->index($request);
         return view('layouts.users.index', [
-            'users' => $this->service->index($request)['users'],
-            'authUserName' => $this->service->index($request)['authUserName'],
-            'authUser' => $this->service->index($request)['authUser'],
-            'searchUsers' => $this->service->index($request)['searchUsers'],
-            'odmen' => $this->service->index($request)['odmen'],
-            'userAuth' => $this->service->index($request)['userAuth'],
+            'users' => $attributes['users'],
+            'authUserName' => $attributes['authUserName'],
+            'authUser' => $attributes['authUser'],
+            'searchUsers' => $attributes['searchUsers'],
+            'odmen' => $attributes['odmen'],
+            'userAuth' => $attributes['userAuth'],
         ]);
     }
 
@@ -139,20 +140,21 @@ class UserController extends Controller
 
 
     public function showUser(User $user) {
+        $attributes = $this->service->showUser($user);
         return view('layouts.users.showUser', [
-           'user' => $this->service->showUser($user)['user'],
-            'messages' => $this->service->showUser($user)['messages'],
-            'images' => $this->service->showUser($user)['images'],
-            'avatar' => $this->service->showUser($user)['avatar'],
-            'comments' => $this->service->showUser($user)['comments'],
-            'tags' => $this->service->showUser($user)['tags'],
-            'authUser' => $this->service->showUser($user)['authUser'],
-            'authUserName' => $this->service->showUser($user)['authUserName'],
-            'userAuth' => $this->service->showUser($user)['userAuth'],
-            'messagesForDelete' => $this->service->showUser($user)['messagesForDelete'],
-            'whoLikeThatMessage' => $this->service->showUser($user)['whoLikeThatMessage'],
-            'whoLikeThatComment' => $this->service->showUser($user)['whoLikeThatComment'],
-            'odmen' => $this->service->showUser($user)['odmen'],
+           'user' => $attributes['user'],
+            'messages' => $attributes['messages'],
+            'images' => $attributes['images'],
+            'avatar' => $attributes['avatar'],
+            'comments' => $attributes['comments'],
+            'tags' => $attributes['tags'],
+            'authUser' => $attributes['authUser'],
+            'authUserName' => $attributes['authUserName'],
+            'userAuth' => $attributes['userAuth'],
+            'messagesForDelete' => $attributes['messagesForDelete'],
+            'whoLikeThatMessage' => $attributes['whoLikeThatMessage'],
+            'whoLikeThatComment' => $attributes['whoLikeThatComment'],
+            'odmen' => $attributes['odmen'],
         ]);
     }
 
@@ -219,10 +221,11 @@ class UserController extends Controller
 
 
     public function addAvatarToUser(User $user) {
+        $attributes = $this->service->addAvatarToUser($user);
         return view('layouts.users.addAvatarToUser', [
-            'user' => $this->service->addAvatarToUser($user)['user'],
-            'id' => $this->service->addAvatarToUser($user)['authUserId'],
-            'authUserName' => $this->service->addAvatarToUser($user)['authUserName'],
+            'user' => $attributes['user'],
+            'id' => $attributes['authUserId'],
+            'authUserName' => $attributes['authUserName'],
         ]);
     }
 
@@ -250,9 +253,10 @@ class UserController extends Controller
     */
 
     public function storeAvatarToUser(User $user, CreateImageRequest $request) {
+        $attributes = $this->service->storeAvatarToUser($user,$request);
         return redirect(route('users.show.user', [
-            'user' => $this->service->storeAvatarToUser($user,$request)['user'],
-            'authUserName' => $this->service->storeAvatarToUser($user,$request)['authUserName'],
+            'user' => $attributes['user'],
+            'authUserName' => $attributes['authUserName'],
         ]));
     }
 
@@ -312,11 +316,12 @@ class UserController extends Controller
     }
 
     public function myMessages(User $user) {
+        $attributes = $this->service->myMessages($user);
         return view('layouts.users.myMessages', [
-            'user' => $this->service->myMessages($user)['user'],
-            'authUserName' => $this->service->MyMessage($user)['authUserName'],
-            'users' => $this->service->MyMessage($user)['users'],
-            'messages' => $this->service->MyMessages($user)['messages']
+            'user' => $attributes['user'],
+            'authUserName' => $attributes['authUserName'],
+            'users' => $attributes['users'],
+            'messages' => $attributes['messages']
         ]);
     }
 
@@ -325,14 +330,15 @@ class UserController extends Controller
     }
 
     public function myMessagesDialog(User $user, $user2) {
+        $attributes = $this->service->myMessagesDialog($user,$user2);
         return view('layouts.users.myMessagesDialog', [
-            'user' => $this->service->myMessagesDialog($user,$user2)['user'],
-            'user2' => $this->service->myMessagesDialog($user,$user2)['user2'],
-            'authUserName' => $this->service->myMessagesDialog($user,$user2)['authUserName'],
-            'users' => $this->service->myMessagesDialog($user,$user2)['users'],
-            'myRecievedMessages' => $this->service->myMessagesDialog($user,$user2)['myRecievedMessages'],
-            'mySendMessages' => $this->service->myMessagesDialog($user,$user2)['mySendMessages'],
-            'messages' => $this->service->myMessagesDialog($user,$user2)['messages'],
+            'user' => $attributes['user'],
+            'user2' => $attributes['user2'],
+            'authUserName' => $attributes['authUserName'],
+            'users' => $attributes['users'],
+            'myRecievedMessages' => $attributes['myRecievedMessages'],
+            'mySendMessages' => $attributes['mySendMessages'],
+            'messages' => $attributes['messages'],
         ]);
     }
 
@@ -341,9 +347,10 @@ class UserController extends Controller
     }
 
     public function usersMyMessageDialogStore(User $user, $user2, MessageRequest $request) {
+        $attributes = $this->service->usersMyMessageDialogStore($user,$user2,$request);
         return redirect(route('users.myMessages.dialog', [
-            'user' => $this->service->usersMyMessageDialogStore($user,$user2,$request)['user'],
-            'user2' => $this->service->usersMyMessageDialogStore($user,$user2,$request)['user2']
+            'user' => $attributes['user'],
+            'user2' => $attributes['user2']
         ]));
     }
 
@@ -379,11 +386,12 @@ class UserController extends Controller
     }
 
     public function myFriends(User $user) {
+        $attributes = $this->service->myFriends($user);
         return view('layouts.users.myFriends', [
-            'user' => $this->service->myFriends($user)['user'],
-            'authUser' => $this->service->myFriends($user)['authUser'],
-            'authUserName' => $this->service->myFriends($user)['authUserName'],
-            'users' => $this->service->myFriends($user)['users'],
+            'user' => $attributes['user'],
+            'authUser' => $attributes['authUser'],
+            'authUserName' => $attributes['authUserName'],
+            'users' => $attributes['users'],
         ]);
     }
 
